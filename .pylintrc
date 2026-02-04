@@ -1,0 +1,18 @@
+[MASTER]
+jobs=0
+ignore-patterns=alembic/.*,.*_pb2\.py  
+init-hook='import sys, os; sys.path.insert(0, os.path.abspath("src"))'
+
+[MESSAGES CONTROL]
+disable=all
+enable=
+    too-many-nested-blocks,
+    useless-import-alias,
+    line-too-long,
+
+[DESIGN]
+max-nested-blocks=5
+
+[FORMAT]
+max-line-length=79
+indent-string='    '

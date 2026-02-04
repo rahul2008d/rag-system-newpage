@@ -1,0 +1,39 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: no-commit-to-branch
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: debug-statements
+      - id: check-added-large-files
+      - id: check-ast
+      - id: check-case-conflict
+
+  - repo: local
+    hooks:
+      # ---------- Ruff ----------
+      - id: ruff
+        name: ruff (lint + autofix)
+        entry: ruff check --fix --config=ruff.toml
+        language: system
+        types: [python]
+        files: ^(src|tests)/
+
+      - id: ruff-format
+        name: ruff (formatter)
+        entry: ruff format --config=ruff.toml
+        language: system
+        types: [python]
+        files: ^(src|tests)/
+
+      # ---------- Pylint ----------
+      - id: pylint
+        name: pylint (design-focused)
+        entry: pylint --rcfile=.pylintrc -rn -sn
+        language: system
+        types: [python]
+        files: ^src/

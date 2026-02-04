@@ -1,0 +1,47 @@
+# ruff.toml — Ruff replaces Flake8 + isort + Black + some Pylint checks
+
+line-length = 79
+target-version = "py311"
+preview = true
+
+[lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # Pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C",  # comprehensions
+    "N",  # PEP8 naming
+    "S",  # security
+    "SIM",  # simplification
+    "RUF",  # Ruff-specific
+    "RET",  # return statements
+    "FIX",  # TODO/FIXME
+    "C90",  # McCabe complexity
+    "D",   # pydocstyle (docstrings, replacing Pylint's docstring checks)
+    "PLR0913",  # too-many-arguments
+    "PLR0914",  # too-many-locals
+    "PLR0402",  # useless-import-alias
+]
+ignore = ["E203", "E501", "D100"]
+fixable = ["ALL"]
+
+[lint.isort]
+known-first-party = ["rag"]
+combine-as-imports = true
+
+[lint.per-file-ignores]
+"alembic/*" = ["ALL"]
+"*_pb2.py" = ["ALL"]
+
+[lint.mccabe]
+max-complexity = 14
+
+[lint.pydocstyle]
+convention = "google"
+
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
