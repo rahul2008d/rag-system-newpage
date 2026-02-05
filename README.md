@@ -1,6 +1,6 @@
 # Chat With Your Docs (RAG System)
 
-🚀 **[Live Demo](http://34.245.107.59:8501)**  
+🚀 **[Live Demo](http://34.245.107.59:8501)**
 
 ---
 A containerised **Retrieval-Augmented Generation (RAG)** application that allows users to upload documents (PDF/TXT), index them into a vector store, and ask questions grounded strictly in the uploaded content.
