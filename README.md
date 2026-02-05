@@ -189,11 +189,20 @@ The application is deployed as a **serverless container** using **AWS ECS with t
 
 ## 🧪 Engineering Standards
 
-- Ruff – linting and formatting
-- Pylint – design-focused checks
-- pre-commit hooks – enforced locally
-- Clear module boundaries
-- Minimal hidden magic
+- **Ruff** – linting and formatting (fast, deterministic)
+- **Pylint** – design-focused static analysis
+- **pre-commit hooks** – enforced locally before every commit
+- Clear module boundaries (UI, RAG core, storage, config)
+- Minimal hidden magic; explicit data flow and configuration
+
+All checks can be run **individually** if needed (e.g. Ruff, Pylint, formatting),
+but for convenience and consistency, a single command runs the full quality gate:
+
+```bash
+pre-commit run --all-files
+```
+
+This ensures formatting, linting, and design checks are applied uniformly across the entire codebase before changes are committed.
 
 ## 🔮 What I’d Add With More Time
 
