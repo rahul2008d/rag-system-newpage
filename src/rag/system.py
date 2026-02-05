@@ -52,9 +52,6 @@ class RAGSystem:
             ("human", "Context:\n{context}\n\nQuestion: {input}\nAnswer:"),
         ])
 
-        # LCEL RAG chain: retrieve docs | format context | prompt | llm
-        self.rag_chain = None  # Built after retriever available
-
     def _format_docs(self, docs: List[Document]) -> str:
         """Format docs for prompt."""
         return "\n\n".join(doc.page_content for doc in docs)
@@ -147,9 +144,6 @@ class RAGSystem:
                 "sources": [],
                 "best_score": best,
             }
-
-        if self.rag_chain is None:
-            raise ValueError("Vector store not loaded. Ingest or load first.")
 
         # Convert history to LangChain messages
         history_msgs = []

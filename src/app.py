@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import contextlib
 import os
 from pathlib import Path
 
@@ -29,12 +28,7 @@ with st.sidebar:
 def get_system(top_k_val: int, min_score_val: float) -> RAGSystem:
     """Get RAG system instance with caching."""
     s = Settings(top_k=top_k_val, min_score=min_score_val)
-    sys = RAGSystem(s)
-
-    with contextlib.suppress(FileNotFoundError):
-        sys.load()
-
-    return sys
+    return RAGSystem(s)
 
 
 if not api_key:
