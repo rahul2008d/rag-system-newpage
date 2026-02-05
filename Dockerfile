@@ -25,7 +25,7 @@ ENV STREAMLIT_SERVER_PORT=8501
 ENV STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
 ENV STORE_DIR=vector_store
 
-RUN mkdir -p /app/vector_store /app/documents 
+RUN mkdir -p /app/vector_store /app/documents
 
 EXPOSE 8501
 

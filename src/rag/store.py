@@ -1,45 +1,40 @@
 from __future__ import annotations
-from dataclasses import asdict
+
 from pathlib import Path
-from typing import List, Tuple
+from typing import List
 
-import faiss
-import numpy as np
-import json
+from langchain_community.vectorstores import FAISS
+from langchain_core.documents import Document
+from langchain_openai import OpenAIEmbeddings
 
-from .chunking import Chunk
 
 def ensure_dir(d: str) -> Path:
+    """Ensure directory exists."""
     p = Path(d)
     p.mkdir(parents=True, exist_ok=True)
     return p
 
-def save_store(store_dir: str, index: faiss.Index, chunks: List[Chunk]) -> None:
-    p = ensure_dir(store_dir)
-    faiss.write_index(index, str(p / "index.faiss"))
 
-    # store chunks w/ metadata in jsonl for easy debugging + review
-    with (p / "chunks.jsonl").open("w", encoding="utf-8") as f:
-        for c in chunks:
-            f.write(json.dumps(asdict(c), ensure_ascii=False) + "\n")
+def build_vectorstore(
+    docs: List[Document], embeddings: OpenAIEmbeddings
+) -> FAISS:
+    """Create a FAISS vector store from documents."""
+    return FAISS.from_documents(docs, embeddings)
 
-def load_store(store_dir: str) -> Tuple[faiss.Index, List[Chunk]]:
-    p = Path(store_dir)
-    index_path = p / "index.faiss"
-    chunks_path = p / "chunks.jsonl"
-    if not index_path.exists() or not chunks_path.exists():
-        raise FileNotFoundError("Vector store not found. Ingest docs first.")
 
-    index = faiss.read_index(str(index_path))
+def save_store(store_dir: str, vs: FAISS) -> None:
+    """Save vector store locally."""
+    ensure_dir(store_dir)
+    vs.save_local(store_dir)
 
-    chunks: List[Chunk] = []
-    with chunks_path.open("r", encoding="utf-8") as f:
-        for line in f:
-            obj = json.loads(line)
-            chunks.append(Chunk(**obj))
-    return index, chunks
 
-def normalize(vectors: np.ndarray) -> np.ndarray:
-    # in-place normalize for cosine via inner product
-    faiss.normalize_L2(vectors)
-    return vectors
+def load_store(
+    store_dir: str, embeddings: OpenAIEmbeddings, *, allow_unsafe: bool = True
+) -> FAISS:
+    """Load vector store locally."""
+    # LangChain requires allow_dangerous_deserialization when loading pickled data
+    return FAISS.load_local(
+        store_dir,
+        embeddings,
+        allow_dangerous_deserialization=allow_unsafe,
+    )

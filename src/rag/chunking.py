@@ -1,30 +1,36 @@
 from __future__ import annotations
-from dataclasses import dataclass
+
+from pathlib import Path
 from typing import List
-import re
 
-from .loaders import DocPage
+from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-@dataclass(frozen=True)
-class Chunk:
-    chunk_id: str
-    source: str
-    page: int
-    text: str
 
-def _split_text(text: str, chunk_size: int, overlap: int) -> List[str]:
-    # simple paragraph-ish normalization
-    text = re.sub(r"\n{3,}", "\n\n", text).strip()
-    if not text:
-        return []
-    step = max(1, chunk_size - overlap)
-    return [text[i : i + chunk_size] for i in range(0, len(text), step)]
+def chunk_pages(
+    pages: List[Document], chunk_size: int, overlap: int
+) -> List[Document]:
+    """Split documents into overlapping chunks and add stable chunk metadata."""
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size,
+        chunk_overlap=overlap,
+        length_function=len,
+        is_separator_regex=False,
+    )
+    chunks = splitter.split_documents(pages)
 
-def chunk_pages(pages: List[DocPage], chunk_size: int, overlap: int) -> List[Chunk]:
-    chunks: List[Chunk] = []
-    for page in pages:
-        parts = _split_text(page.text, chunk_size, overlap)
-        for j, part in enumerate(parts, start=1):
-            cid = f"{page.source}:p{page.page}:c{j}"
-            chunks.append(Chunk(chunk_id=cid, source=page.source, page=page.page, text=part))
+    per_source_page_counter: dict[tuple[str, int], int] = {}
+    for d in chunks:
+        source = str(d.metadata.get("source", "unknown"))
+        page0 = int(d.metadata.get("page", 0))
+        page = page0 + 1
+        key = (source, page)
+        per_source_page_counter[key] = per_source_page_counter.get(key, 0) + 1
+        cnum = per_source_page_counter[key]
+
+        # Keep your existing style: filename:p{page}:c{chunk}
+        fname = Path(source).name
+        d.metadata["chunk_id"] = f"{fname}:p{page}:c{cnum}"
+        d.metadata["page"] = page  # store 1-index
+
     return chunks

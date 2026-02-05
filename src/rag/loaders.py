@@ -1,27 +1,28 @@
 from __future__ import annotations
-from dataclasses import dataclass
+
 from pathlib import Path
 from typing import Iterable, List
 
-from pypdf import PdfReader
+from langchain_community.document_loaders import PyPDFLoader, TextLoader
+from langchain_core.documents import Document
 
-@dataclass(frozen=True)
-class DocPage:
-    source: str
-    page: int
-    text: str
 
-def load_files(paths: Iterable[Path]) -> List[DocPage]:
-    pages: List[DocPage] = []
+def load_files(paths: Iterable[Path]) -> List[Document]:
+    """Load PDF/TXT files into LangChain Documents (PDF is page-split)."""
+    docs: List[Document] = []
+
     for p in paths:
         if p.suffix.lower() == ".pdf":
-            reader = PdfReader(str(p))
-            for i, page in enumerate(reader.pages, start=1):
-                txt = (page.extract_text() or "").strip()
-                if txt:
-                    pages.append(DocPage(source=p.name, page=i, text=txt))
+            loader = PyPDFLoader(str(p))
+            # PyPDFLoader returns one Document per page with metadata incl. page index
+            docs.extend(loader.load())
         elif p.suffix.lower() == ".txt":
-            txt = p.read_text(encoding="utf-8", errors="ignore").strip()
-            if txt:
-                pages.append(DocPage(source=p.name, page=1, text=txt))
-    return pages
+            loader = TextLoader(str(p), encoding="utf-8")
+            d = loader.load()
+            # Ensure source is consistent with PDFs
+            for doc in d:
+                doc.metadata.setdefault("source", str(p))
+                doc.metadata.setdefault("page", 0)
+            docs.extend(d)
+
+    return docs

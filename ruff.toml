@@ -1,7 +1,7 @@
 # ruff.toml — Ruff replaces Flake8 + isort + Black + some Pylint checks
 
 line-length = 79
-target-version = "py311"
+target-version = "py313"
 preview = true
 
 [lint]

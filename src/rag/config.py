@@ -1,13 +1,19 @@
-from dataclasses import dataclass
 import os
+from dataclasses import dataclass
 
 from dotenv import load_dotenv
+
 load_dotenv()
+
 
 @dataclass(frozen=True)
 class Settings:
+    """Configuration settings for RAG system."""
+
     openai_api_key: str = os.environ.get("OPENAI_API_KEY", "")
-    embedding_model: str = os.environ.get("EMBEDDING_MODEL", "text-embedding-3-small")
+    embedding_model: str = os.environ.get(
+        "EMBEDDING_MODEL", "text-embedding-3-small"
+    )
     chat_model: str = os.environ.get("CHAT_MODEL", "gpt-4o-mini")
 
     chunk_size: int = int(os.environ.get("CHUNK_SIZE", "900"))
