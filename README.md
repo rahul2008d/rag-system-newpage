@@ -1,5 +1,8 @@
 # Chat With Your Docs (RAG System)
 
+🚀 **[Live Demo](http://34.245.107.59:8501)**  
+
+---
 A containerised **Retrieval-Augmented Generation (RAG)** application that allows users to upload documents (PDF/TXT), index them into a vector store, and ask questions grounded strictly in the uploaded content.
 
 The system is intentionally designed to be **simple, explainable, and production-ready**, prioritising engineering clarity and realistic trade-offs over over-engineering.
@@ -145,12 +148,36 @@ http://localhost:8501
 
 ## ☁️ Deployment (AWS ECS Fargate)
 
-- Docker image stored in Amazon ECR
-- ECS Service configuration:
-  - 0.5 vCPU
-  - 1 GB RAM
-- Stateless container with on-demand scaling
-- Store vectors locally in FAISS
+🚀 **[Open Live Application](https://YOUR_PUBLIC_URL)**
+
+The application is deployed as a **serverless container** using **AWS ECS with the Fargate launch type**, requiring no EC2 or infrastructure management.
+
+### Deployment Setup
+- **Container Image**
+  - Built using a multi-stage Dockerfile
+  - Stored in **Amazon ECR**
+  - Versioned image pushed and referenced by ECS task definition
+
+- **ECS Configuration**
+  - ECS Cluster with **Fargate** capacity provider
+  - ECS Service running a single task (demo-friendly)
+  - **0.5 vCPU / 1 GB RAM** per task
+  - Public access enabled via **Application Load Balancer**
+  - Health checks managed by ECS
+
+- **Runtime Configuration**
+  - Environment variables injected at runtime (e.g. `OPENAI_API_KEY`)
+  - No secrets baked into the image
+  - Stateless container design
+
+- **Persistence & State**
+  - Vector store backed by **FAISS** on the container filesystem
+  - Re-ingestion required on task restart (intentional trade-off for simplicity)
+  - Designed for easy upgrade to S3 / EFS if persistence is required
+
+### Cost & Scaling
+- On-demand billing (pay only while the task is running)
+- Service can be **paused instantly** by setting:
 
 
 ## Cost Control
