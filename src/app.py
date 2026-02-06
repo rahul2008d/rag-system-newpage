@@ -13,11 +13,6 @@ st.title("Chat With Your Docs")
 
 with st.sidebar:
     st.subheader("Config")
-    api_key = st.text_input(
-        "OpenAI API Key",
-        type="password",
-        value=os.environ.get("OPENAI_API_KEY", ""),
-    )
     top_k = st.slider("Top-K", 2, 10, 5)
     min_score = st.slider("Min score (confidence)", 0.0, 0.6, 0.25, 0.01)
 
@@ -31,8 +26,11 @@ def get_system(top_k_val: int, min_score_val: float) -> RAGSystem:
     return RAGSystem(s)
 
 
-if not api_key:
-    st.info("Enter an OpenAI API key in the sidebar (or set OPENAI_API_KEY).")
+if not os.environ.get("OPENAI_API_KEY"):
+    st.error(
+        "OPENAI_API_KEY is not configured on the server. "
+        "Please contact the application owner."
+    )
     st.stop()
 
 system = get_system(top_k, min_score)
