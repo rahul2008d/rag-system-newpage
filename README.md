@@ -1,6 +1,6 @@
 # Chat With Your Docs (RAG System)
 
-🚀 **[Live Demo](http://34.245.107.59:8501)**
+🚀 **[Live Demo](http://34.240.222.116:8501)**
 
 ---
 A containerised **Retrieval-Augmented Generation (RAG)** application that allows users to upload documents (PDF/TXT), index them into a vector store, and ask questions grounded strictly in the uploaded content.
@@ -148,7 +148,7 @@ http://localhost:8501
 
 ## ☁️ Deployment (AWS ECS Fargate)
 
-🚀 **[Open Live Application](https://YOUR_PUBLIC_URL)**
+🚀 **[Open Live Application](http://34.240.222.116:8501)**
 
 The application is deployed as a **serverless container** using **AWS ECS with the Fargate launch type**, requiring no EC2 or infrastructure management.
 
